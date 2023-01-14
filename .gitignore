@@ -1,0 +1,4 @@
+.idea/
+.vscode/
+node_modules/
+/src/config/keys-dev.js
