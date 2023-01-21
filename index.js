@@ -21,20 +21,15 @@ app.use(requestLogger);
 
 app.post("/", validateAddWord, async (req, res) => {
   const word = req.body.word.trim().toLowerCase();
-  console.log("Add: " + word);
   await db.add(word);
+  console.log("Add: " + word);
 
   return res.status(201).send();
 });
 app.get("/", validateGetWord, async (req, res) => {
-  const {keys, params, length} = parseQuery(req.query);
+  const {params, length} = parseQuery(req.query);
   const filteredWords = await db.getByLength(length);
-  const words = filterWords({
-    words: filteredWords,
-    keys,
-    params,
-    length
-  });
+  const words = filterWords({words: filteredWords, params, length});
 
   return res.status(200).json({
     words,
@@ -43,8 +38,8 @@ app.get("/", validateGetWord, async (req, res) => {
 });
 app.delete("/:word", validateDeleteWord, async (req, res) => {
   const word = req.params.word.trim().toLowerCase();
-  console.log("Delete: " + word);
   await db.delete(word);
+  console.log("Delete: " + word);
 
   return res.status(204).send();
 });
@@ -64,7 +59,3 @@ app.delete("/:word", validateDeleteWord, async (req, res) => {
     console.error(err.message);
   }
 })();
-
-/* todo:
-  render chars on web
- */

@@ -2,14 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>World of Words</title>
     <link rel="stylesheet" href="./style.css">
     <style>
-        h1 {
-            text-align: center;
+        *, *:before, *:after {
+            margin: 0;
+            padding: 0;
         }
-        h2 {
-            text-indent: 10%;
+        h1 {
+            font-size: 36px;
+            text-align: center;
+            margin: 20px 0;
         }
         form {
             display: flex;
@@ -19,40 +23,42 @@
         input {
             height: 50px;
             width: 80%;
+            margin: 5px;
+            padding: 5px;
             border-radius: 5px;
             font-size: 24px;
-        }
-        label {
-            text-indent: 14px;
         }
         button {
             display: block;
             margin: 5px auto;
+            width: 200px;
+            height: 50px;
+            border: 1px grey solid;
+            border-radius: 10px;
+            text-transform: uppercase;
+            font-size: 20px;
+        }
+        p {
+            font-size: 24px;
+            text-align: center;
         }
         .sections {
             display: flex;
             justify-content: space-around;
+            flex-direction: column;
         }
         .section {
             width: 100%;
             margin: 10px;
         }
-        .letters {
-            display: flex;
-            flex-direction: column;
-            flex-wrap: wrap;
-            height: 330px;
-        }
-        .letters input {
-            height: 30px;
-            width: 30px;
-        }
         .result {
-            columns: 3 300px;
+            columns: 3;
         }
-        p {
-            font-size: 24px;
-            text-align: center;
+
+        @media only screen and (min-width: 576px) {
+            .sections {
+                flex-direction: row;
+            }
         }
     </style>
 </head>
@@ -60,191 +66,105 @@
 <h1>Словник для гри WOW</h1>
 <div class="sections">
     <div class="section">
-        <h2>Додати слово:</h2>
         <form id="addForm">
             <input type="text" placeholder="Додати нове слово" min="3" required>
-            <button>Надіслати</button>
+            <button>Додати</button>
         </form>
     </div>
     <div class="section">
-        <h2>Видалити слово:</h2>
         <form id="deleteWord">
-            <input type="text">
+            <input type="text" placeholder="Видалити слово" required>
             <button>Видалити</button>
         </form>
     </div>
 </div>
 <hr>
-<h2>Шукати слова:</h2>
-<div class="letters">
-    <label>a</label>
-    <input type="checkbox" value="а">
-    <label>б</label>
-    <input type="checkbox" value="б">
-    <label>в</label>
-    <input type="checkbox" value="в">
-    <label>г</label>
-    <input type="checkbox" value="г">
-    <label>д</label>
-    <input type="checkbox" value="д">
-    <label>е</label>
-    <input type="checkbox" value="е">
-    <label>ж</label>
-    <input type="checkbox" value="ж">
-    <label>з</label>
-    <input type="checkbox" value="з">
-    <label>и</label>
-    <input type="checkbox" value="и">
-    <label>і</label>
-    <input type="checkbox" value="і">
-    <label>й</label>
-    <input type="checkbox" value="й">
-    <label>к</label>
-    <input type="checkbox" value="к">
-    <label>л</label>
-    <input type="checkbox" value="л">
-    <label>м</label>
-    <input type="checkbox" value="м">
-    <label>н</label>
-    <input type="checkbox" value="н">
-    <label>о</label>
-    <input type="checkbox" value="о">
-    <label>п</label>
-    <input type="checkbox" value="п">
-    <label>р</label>
-    <input type="checkbox" value="р">
-    <label>с</label>
-    <input type="checkbox" value="с">
-    <label>т</label>
-    <input type="checkbox" value="т">
-    <label>у</label>
-    <input type="checkbox" value="у">
-    <label>ф</label>
-    <input type="checkbox" value="ф">
-    <label>х</label>
-    <input type="checkbox" value="х">
-    <label>ц</label>
-    <input type="checkbox" value="ц">
-    <label>ч</label>
-    <input type="checkbox" value="ч">
-    <label>ш</label>
-    <input type="checkbox" value="ш">
-    <label>щ</label>
-    <input type="checkbox" value="щ">
-    <label>ь</label>
-    <input type="checkbox" value="ь">
-    <label>ю</label>
-    <input type="checkbox" value="ю">
-    <label>я</label>
-    <input type="checkbox" value="я">
-</div>
 <div class="section">
     <form id="getWords">
-        <input type="text" placeholder="Шаблон" min="3" required>
+        <input type="text" id="letters" placeholder="Букви" min="3" required>
+        <input type="number" placeholder="Кількість" min="3" required>
         <button>Шукати</button>
     </form>
-    <div class="result"></div>
 </div>
+<hr>
+<div class="section result"></div>
 
 <script>
-  const addForm = document.getElementById("addForm");
-  const getWordsForm = document.getElementById("getWords");
-  const deleteWordForm = document.getElementById("deleteWord");
-  const letters = document.querySelector(".letters");
-  const result = document.querySelector(".result");
-  const use = new Set();
+  window.addEventListener("DOMContentLoaded", () => {
+    const addForm = document.getElementById("addForm");
+    const getWordsForm = document.getElementById("getWords");
+    const deleteWordForm = document.getElementById("deleteWord");
+    const letters = document.getElementById("letters");
+    const result = document.querySelector(".result");
 
-  function renderWords(words) {
-    words.forEach(word => {
-      const p = document.createElement("p");
-      p.innerHTML = word;
-      result.append(p);
-    });
-  }
-  function clearForm(form) {
-    form[0].value = "";
-  }
-  function clearResult() {
-    result.innerHTML = "";
-  }
+    function renderWords(words) {
+      words.forEach(word => {
+        const p = document.createElement("p");
+        p.innerHTML = word;
+        result.append(p);
+      });
+    }
+    function clearForm(form) {
+      form[0].value = "";
+    }
+    function clearResult() {
+      result.innerHTML = "";
+    }
 
-  addForm.addEventListener("submit", e => {
-    e.preventDefault();
-    // console.log(e.srcElement[0].value);
-    fetch("http://localhost:3000/", {
-      mode: "cors",
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        word: e.srcElement[0].value.trim().toLowerCase()
-      }),
-    })
-      .then(async response => {
-        if (response.status === 400) {
-          const body = await response.json();
-          alert(body.message);
-        }
-      });
-    clearForm(addForm);
-  });
-  getWordsForm.addEventListener("submit", e => {
-    e.preventDefault();
-    clearResult()
-    const value = e.srcElement[0].value.split("");
-    const usedChars = [...use];
-    let query = "";
-    if (value.length) {
-      query += `l=${value.length}`;
-      value.forEach((char, index) => {
-        if (char !== "-") {
-          query += `&${index}=${char}`;
-        }
-      });
-      query += "&";
-    }
-    if (usedChars.length) {
-      query += `u=${usedChars.join("")}`;
-    }
-    fetch(`http://localhost:3000/?${query}`, {
-      mode: "cors",
-      method: "GET",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => response.json())
-      .then(res => {
-        if (res.message) return alert(res.message);
-        renderWords(res.words);
+    addForm.addEventListener("submit", e => {
+      e.preventDefault();
+      // console.log(e.target[0].value);
+      fetch("http://localhost:3000/", {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          word: e.target[0].value.trim().toLowerCase()
+        }),
       })
-      .catch(error => console.log(error.message));
-  });
-  deleteWordForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const value = e.srcElement[0].value.trim().toLowerCase();
-    fetch(`http://localhost:3000/${value}`, {
-      mode: "cors",
-      method: "DELETE",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .catch(error => console.log(error.message));
-    clearForm(deleteWordForm);
-  });
-  letters.childNodes.forEach(element => {
-    if (element.nodeName === "INPUT") {
-      element.addEventListener("click", e => {
-        const {checked, value} = e.target;
-        if (checked) {
-          use.add(value);
-        } else {
-          use.delete(value);
-        }
-      });
-    }
+        .then(async response => {
+          if (response.status === 400) {
+            const body = await response.json();
+            alert(body.message);
+          }
+        });
+      clearForm(addForm);
+    });
+    getWordsForm.addEventListener("submit", e => {
+      e.preventDefault();
+      clearResult()
+      const usedChars = e.target[0].value.trim().toLowerCase();
+      const value = e.target[1].value;
+      let query = `l=${value}&u=${usedChars}`;
+      fetch(`http://localhost:3000/?${query}`, {
+        mode: "cors",
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => response.json())
+        .then(res => {
+          if (res.message) return alert(res.message);
+          renderWords(res.words);
+        });
+    });
+    deleteWordForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const value = e.target[0].value.trim().toLowerCase();
+      fetch(`http://localhost:3000/${value}`, {
+        mode: "cors",
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .catch(error => console.log(error.message));
+      clearForm(deleteWordForm);
+    });
+    letters.focus();
   });
 </script>
 </body>
