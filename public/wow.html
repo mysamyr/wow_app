@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>World of Words</title>
     <link rel="stylesheet" href="./style.css">
 </head>
@@ -9,91 +10,28 @@
 <h1>Словник для гри WOW</h1>
 <div class="sections">
     <div class="section">
-        <h2>Додати слово:</h2>
         <form id="addForm">
             <input type="text" placeholder="Додати нове слово" min="3" required>
-            <button>Надіслати</button>
+            <button>Додати</button>
         </form>
     </div>
     <div class="section">
-        <h2>Видалити слово:</h2>
         <form id="deleteWord">
-            <input type="text">
+            <input type="text" placeholder="Видалити слово" required>
             <button>Видалити</button>
         </form>
     </div>
 </div>
 <hr>
-<h2>Шукати слова:</h2>
-<div class="letters">
-    <label>a</label>
-    <input type="checkbox" value="а">
-    <label>б</label>
-    <input type="checkbox" value="б">
-    <label>в</label>
-    <input type="checkbox" value="в">
-    <label>г</label>
-    <input type="checkbox" value="г">
-    <label>д</label>
-    <input type="checkbox" value="д">
-    <label>е</label>
-    <input type="checkbox" value="е">
-    <label>ж</label>
-    <input type="checkbox" value="ж">
-    <label>з</label>
-    <input type="checkbox" value="з">
-    <label>и</label>
-    <input type="checkbox" value="и">
-    <label>і</label>
-    <input type="checkbox" value="і">
-    <label>й</label>
-    <input type="checkbox" value="й">
-    <label>к</label>
-    <input type="checkbox" value="к">
-    <label>л</label>
-    <input type="checkbox" value="л">
-    <label>м</label>
-    <input type="checkbox" value="м">
-    <label>н</label>
-    <input type="checkbox" value="н">
-    <label>о</label>
-    <input type="checkbox" value="о">
-    <label>п</label>
-    <input type="checkbox" value="п">
-    <label>р</label>
-    <input type="checkbox" value="р">
-    <label>с</label>
-    <input type="checkbox" value="с">
-    <label>т</label>
-    <input type="checkbox" value="т">
-    <label>у</label>
-    <input type="checkbox" value="у">
-    <label>ф</label>
-    <input type="checkbox" value="ф">
-    <label>х</label>
-    <input type="checkbox" value="х">
-    <label>ц</label>
-    <input type="checkbox" value="ц">
-    <label>ч</label>
-    <input type="checkbox" value="ч">
-    <label>ш</label>
-    <input type="checkbox" value="ш">
-    <label>щ</label>
-    <input type="checkbox" value="щ">
-    <label>ь</label>
-    <input type="checkbox" value="ь">
-    <label>ю</label>
-    <input type="checkbox" value="ю">
-    <label>я</label>
-    <input type="checkbox" value="я">
-</div>
 <div class="section">
     <form id="getWords">
-        <input type="text" placeholder="Шаблон" min="3" required>
+        <input type="text" id="letters" placeholder="Букви" min="3" required>
+        <input type="number" placeholder="Кількість" min="3" required>
         <button>Шукати</button>
     </form>
-    <div class="result"></div>
 </div>
+<hr>
+<div class="section result"></div>
 
 <script src="./index.js"></script>
 </body>
