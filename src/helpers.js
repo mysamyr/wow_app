@@ -17,8 +17,8 @@ const filter = (chars, words, length) => {
 
 module.exports.filterWords = ({words, params, length}) => {
   let correctWords = [];
-  if (params.u) {
-    const charsObj = params.u.split("").reduce((acc, char) => {
+  if (params) {
+    const charsObj = params.split("").reduce((acc, char) => {
       acc[char] = (acc[char] || 0) + 1;
       return acc;
     }, {});
@@ -31,7 +31,7 @@ module.exports.filterWords = ({words, params, length}) => {
 
 module.exports.parseQuery = (query) => {
   return {
-    params: query,
+    params: query.u,
     length: +query.l
   };
 };

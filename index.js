@@ -28,12 +28,27 @@ app.post("/", validateAddWord, async (req, res) => {
 });
 app.get("/", validateGetWord, async (req, res) => {
   const {params, length} = parseQuery(req.query);
-  const filteredWords = await db.getByLength(length);
-  const words = filterWords({words: filteredWords, params, length});
+  const words = [];
+
+  if (!length) {
+    const foundWords = await db.get(params);
+    for (let l of [3,4,5,6]) {
+      const filteredWords = foundWords.filter(({word}) => word.length === l);
+      words.push(...filterWords({words: filteredWords, params, length: l}));
+    }
+  } else {
+    const foundWords = await db.getByLength(length);
+    words.push(...filterWords({words: foundWords, params, length}));
+  }
 
   return res.status(200).json({
     words,
     length: words.length
+  });
+});
+app.get("/count", validateGetWord, async (req, res) => {
+  return res.status(200).json({
+    count: await db.count()
   });
 });
 app.delete("/:word", validateDeleteWord, async (req, res) => {

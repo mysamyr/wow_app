@@ -58,6 +58,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (res.message) return alert(res.message);
         renderWords(res.words);
       });
+    addForm[0].focus();
   });
   deleteWordForm.addEventListener("submit", e => {
     e.preventDefault();
