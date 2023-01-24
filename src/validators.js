@@ -35,7 +35,7 @@ module.exports.validateAddWord = async (req, res, next) => {
 };
 
 module.exports.validateGetWord = async (req, res, next) => {
-  if (!req.query.l || req.query.l < 3) return res.status(400).json({
+  if (req.query.l && req.query.l < 3) return res.status(400).json({
     message: MIN_LENGTH,
   });
 
