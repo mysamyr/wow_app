@@ -35,3 +35,19 @@ module.exports.parseQuery = (query) => {
     length: +query.l
   };
 };
+
+module.exports.createSearchRegex = (letters) => {
+  const chars = [...new Set(letters.split(""))];
+  let regex = "(";
+  let values = ["а","о","у","е","и","і"];
+  const usedVowelChars = values.filter(v => chars.includes(v));
+  usedVowelChars.forEach((char, idx) => {
+    if (idx === 0) {
+      regex += char;
+    } else {
+      regex += `|${char}`;
+    }
+  });
+  regex += ")";
+  return regex;
+};

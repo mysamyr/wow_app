@@ -1,16 +1,18 @@
 window.addEventListener("DOMContentLoaded", () => {
-  const addForm = document.getElementById("addForm");
   const getWordsForm = document.getElementById("getWords");
+  const addForm = document.getElementById("addForm");
   const deleteWordForm = document.getElementById("deleteWord");
   const letters = document.getElementById("letters");
   const result = document.querySelector(".result");
+  const count = document.querySelector(".count");
 
-  function renderWords(words) {
+  function renderWords({words, length}) {
     words.forEach(word => {
       const p = document.createElement("p");
       p.innerHTML = word;
       result.append(p);
     });
+    count.childNodes[1].innerHTML = length;
   }
   function clearForm(form) {
     form[0].value = "";
@@ -19,10 +21,29 @@ window.addEventListener("DOMContentLoaded", () => {
     result.innerHTML = "";
   }
 
+  getWordsForm.addEventListener("submit", e => {
+    e.preventDefault();
+    clearResult()
+    const usedChars = e.target[0].value.trim().toLowerCase();
+    let query = `u=${usedChars}`;
+    fetch(`http://localhost:3000/word?${query}`, {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        if (res.message) return alert(res.message);
+        renderWords(res);
+      });
+    addForm[0].focus();
+  });
   addForm.addEventListener("submit", e => {
     e.preventDefault();
     // console.log(e.target[0].value);
-    fetch("http://localhost:3000/", {
+    fetch("http://localhost:3000/word", {
       mode: "cors",
       method: "POST",
       headers: {
@@ -40,30 +61,10 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     clearForm(addForm);
   });
-  getWordsForm.addEventListener("submit", e => {
-    e.preventDefault();
-    clearResult()
-    const usedChars = e.target[0].value.trim().toLowerCase();
-    const value = e.target[1].value;
-    let query = `l=${value}&u=${usedChars}`;
-    fetch(`http://localhost:3000/?${query}`, {
-      mode: "cors",
-      method: "GET",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => response.json())
-      .then(res => {
-        if (res.message) return alert(res.message);
-        renderWords(res.words);
-      });
-    addForm[0].focus();
-  });
   deleteWordForm.addEventListener("submit", e => {
     e.preventDefault();
     const value = e.target[0].value.trim().toLowerCase();
-    fetch(`http://localhost:3000/${value}`, {
+    fetch(`http://localhost:3000/word/${value}`, {
       mode: "cors",
       method: "DELETE",
       headers: {

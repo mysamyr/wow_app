@@ -1,3 +1,4 @@
+const fs = require("fs");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -19,26 +20,42 @@ app.use(cors({origin: "*"}));
 
 app.use(requestLogger);
 
-app.post("/", validateAddWord, async (req, res) => {
+app.get("/", (req, res) => {
+  return res.sendFile("./public/single-page.html", {root: __dirname}, function(error) {
+    if (error) {
+      res.writeHead(500);
+      res.end();
+    }
+  });
+});
+app.post("/word", validateAddWord, async (req, res) => {
   const word = req.body.word.trim().toLowerCase();
   await db.add(word);
   console.log("Add: " + word);
 
   return res.status(201).send();
 });
-app.get("/", validateGetWord, async (req, res) => {
-  const {params, length} = parseQuery(req.query);
+app.get("/word", validateGetWord, async (req, res) => {
+  const {params} = parseQuery(req.query);
   const words = [];
 
-  if (!length) {
-    const foundWords = await db.get(params);
-    for (let l of [3,4,5,6]) {
-      const filteredWords = foundWords.filter(({word}) => word.length === l);
-      words.push(...filterWords({words: filteredWords, params, length: l}));
-    }
-  } else {
-    const foundWords = await db.getByLength(length);
-    words.push(...filterWords({words: foundWords, params, length}));
+  const DBCount = await db.count();
+  const localDB = require("./src/storage.json");
+
+  const foundWords = (DBCount !== localDB.length)
+  ? await db.getAll()
+  : localDB;
+
+  for (let length of [3,4,5,6]) {
+    const filteredWords = foundWords.filter(word => word.length === length);
+    words.push(...filterWords({words: filteredWords, params, length}));
+  }
+
+  if (DBCount !== localDB.length) {
+    const data = JSON.stringify(foundWords.map(({word, length}) => ({word, length})))
+    fs.writeFile("./src/storage.json", data, {encoding: "utf-8"}, () => {
+      console.log(`Added ${DBCount - localDB.length} words to local DB`);
+    });
   }
 
   return res.status(200).json({
@@ -51,7 +68,7 @@ app.get("/count", validateGetWord, async (req, res) => {
     count: await db.count()
   });
 });
-app.delete("/:word", validateDeleteWord, async (req, res) => {
+app.delete("/word/:word", validateDeleteWord, async (req, res) => {
   const word = req.params.word.trim().toLowerCase();
   await db.delete(word);
   console.log("Delete: " + word);
