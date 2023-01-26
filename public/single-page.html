@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>World of Words</title>
-    <link rel="stylesheet" href="./style.css">
     <style>
         *, *:before, *:after {
             margin: 0;
@@ -54,6 +53,10 @@
         .result {
             columns: 3;
         }
+        .count {
+            font-size: 1.5rem;
+            text-align: center;
+        }
 
         @media only screen and (min-width: 576px) {
             .sections {
@@ -63,110 +66,111 @@
     </style>
 </head>
 <body>
-<h1>Словник для гри WOW</h1>
-<div class="sections">
+    <h1>Словник для гри WOW</h1>
     <div class="section">
-        <form id="addForm">
-            <input type="text" placeholder="Додати нове слово" min="3" required>
-            <button>Додати</button>
+        <form id="getWords">
+            <input type="text" id="letters" placeholder="Букви" min="3" required>
+            <button>Шукати</button>
         </form>
     </div>
-    <div class="section">
-        <form id="deleteWord">
-            <input type="text" placeholder="Видалити слово" required>
-            <button>Видалити</button>
-        </form>
+    <hr>
+    <div class="sections">
+        <div class="section">
+            <form id="addForm">
+                <input type="text" placeholder="Додати нове слово" min="3" required>
+                <button>Додати</button>
+            </form>
+        </div>
+        <div class="section">
+            <form id="deleteWord">
+                <input type="text" placeholder="Видалити слово" required>
+                <button>Видалити</button>
+            </form>
+        </div>
     </div>
-</div>
-<hr>
-<div class="section">
-    <form id="getWords">
-        <input type="text" id="letters" placeholder="Букви" min="3" required>
-        <input type="number" placeholder="Кількість" min="3">
-        <button>Шукати</button>
-    </form>
-</div>
-<hr>
-<div class="section result"></div>
+    <hr>
+    <div class="section result"></div>
+    <h3 class="section count">Кількість: <span>0</span></h3>
 
-<script>
-  window.addEventListener("DOMContentLoaded", () => {
-    const addForm = document.getElementById("addForm");
-    const getWordsForm = document.getElementById("getWords");
-    const deleteWordForm = document.getElementById("deleteWord");
-    const letters = document.getElementById("letters");
-    const result = document.querySelector(".result");
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const getWordsForm = document.getElementById("getWords");
+        const addForm = document.getElementById("addForm");
+        const deleteWordForm = document.getElementById("deleteWord");
+        const letters = document.getElementById("letters");
+        const result = document.querySelector(".result");
+        const count = document.querySelector(".count");
 
-    function renderWords(words) {
-      words.forEach(word => {
-        const p = document.createElement("p");
-        p.innerHTML = word;
-        result.append(p);
+        function renderWords({words, length}) {
+          words.forEach(word => {
+            const p = document.createElement("p");
+            p.innerHTML = word;
+            result.append(p);
+          });
+          count.childNodes[1].innerHTML = length;
+        }
+        function clearForm(form) {
+          form[0].value = "";
+        }
+        function clearResult() {
+          result.innerHTML = "";
+        }
+
+        getWordsForm.addEventListener("submit", e => {
+          e.preventDefault();
+          clearResult()
+          const usedChars = e.target[0].value.trim().toLowerCase();
+          let query = `u=${usedChars}`;
+          fetch(`https://wow-app.onrender.com/word?${query}`, {
+            mode: "cors",
+            method: "GET",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then(response => response.json())
+            .then(res => {
+              if (res.message) return alert(res.message);
+              renderWords(res);
+            });
+          addForm[0].focus();
+        });
+        addForm.addEventListener("submit", e => {
+          e.preventDefault();
+          // console.log(e.target[0].value);
+          fetch("https://wow-app.onrender.com/word", {
+            mode: "cors",
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              word: e.target[0].value.trim().toLowerCase()
+            }),
+          })
+            .then(async response => {
+              if (response.status === 400) {
+                const body = await response.json();
+                alert(body.message);
+              }
+            });
+          clearForm(addForm);
+        });
+        deleteWordForm.addEventListener("submit", e => {
+          e.preventDefault();
+          const value = e.target[0].value.trim().toLowerCase();
+          fetch(`https://wow-app.onrender.com/word/${value}`, {
+            mode: "cors",
+            method: "DELETE",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .catch(error => console.log(error.message));
+          clearForm(deleteWordForm);
+        });
+        letters.focus();
       });
-    }
-    function clearForm(form) {
-      form[0].value = "";
-    }
-    function clearResult() {
-      result.innerHTML = "";
-    }
-
-    addForm.addEventListener("submit", e => {
-      e.preventDefault();
-      // console.log(e.target[0].value);
-      fetch("https://wow-app.onrender.com/", {
-        mode: "cors",
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          word: e.target[0].value.trim().toLowerCase()
-        }),
-      })
-        .then(async response => {
-          if (response.status === 400) {
-            const body = await response.json();
-            alert(body.message);
-          }
-        });
-      clearForm(addForm);
-    });
-    getWordsForm.addEventListener("submit", e => {
-      e.preventDefault();
-      clearResult()
-      const usedChars = e.target[0].value.trim().toLowerCase();
-      const value = e.target[1].value;
-      let query = `l=${value}&u=${usedChars}`;
-      fetch(`https://wow-app.onrender.com/?${query}`, {
-        mode: "cors",
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then(response => response.json())
-        .then(res => {
-          if (res.message) return alert(res.message);
-          renderWords(res.words);
-        });
-      addForm[0].focus();
-    });
-    deleteWordForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const value = e.target[0].value.trim().toLowerCase();
-      fetch(`https://wow-app.onrender.com/${value}`, {
-        mode: "cors",
-        method: "DELETE",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .catch(error => console.log(error.message));
-      clearForm(deleteWordForm);
-    });
-    letters.focus();
-  });
-</script>
+    </script>
 </body>
 </html>

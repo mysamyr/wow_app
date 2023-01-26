@@ -1,4 +1,5 @@
-const { Schema, model } = require("mongoose");
+const {Schema, model} = require("mongoose");
+// const {createSearchRegex} = require("./helpers");
 
 const wordSchema = new Schema({
   word: {
@@ -20,28 +21,14 @@ module.exports = {
     });
     await newWord.save();
   },
-  async getByLength(length) {
-    return wordModel.find({length});
-  },
-  async get(u) {
-    if (u.length) {
-      const chars = [...new Set(u.split(""))];
-      let regex = "(";
-      let values = ["а","о","у","е","и","і"];
-      const usedVowelChars = values.filter(v => chars.includes(v));
-      usedVowelChars.forEach((char, idx) => {
-        if (idx === 0) {
-          regex += char;
-        } else {
-          regex += `|${char}`;
-        }
-      });
-      regex += ")";
-
-      return wordModel.find({word: {
-          $regex: regex
-        }});
-    }
+  async getAll(letters) {
+    // if (letters?.length) {
+    //   return wordModel.find({
+    //     word: {
+    //       $regex: createSearchRegex(letters)
+    //     }
+    //   });
+    // }
     return wordModel.find();
   },
   async find(word) {
