@@ -7,32 +7,32 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<h1>Словник для гри WOW</h1>
-<div class="sections">
+    <h1>Словник для гри WOW</h1>
     <div class="section">
-        <form id="addForm">
-            <input type="text" placeholder="Додати нове слово" min="3" required>
-            <button>Додати</button>
+        <form id="getWords">
+            <input type="text" id="letters" placeholder="Букви" min="3" required>
+            <button>Шукати</button>
         </form>
     </div>
-    <div class="section">
-        <form id="deleteWord">
-            <input type="text" placeholder="Видалити слово" required>
-            <button>Видалити</button>
-        </form>
+    <hr>
+    <div class="sections">
+        <div class="section">
+            <form id="addForm">
+                <input type="text" placeholder="Додати нове слово" min="3" required>
+                <button>Додати</button>
+            </form>
+        </div>
+        <div class="section">
+            <form id="deleteWord">
+                <input type="text" placeholder="Видалити слово" required>
+                <button>Видалити</button>
+            </form>
+        </div>
     </div>
-</div>
-<hr>
-<div class="section">
-    <form id="getWords">
-        <input type="text" id="letters" placeholder="Букви" min="3" required>
-        <input type="number" placeholder="Кількість" min="3">
-        <button>Шукати</button>
-    </form>
-</div>
-<hr>
-<div class="section result"></div>
+    <hr>
+    <div class="section result"></div>
+    <h3 class="section count">Кількість: <span>0</span></h3>
 
-<script src="./index.js"></script>
+    <script src="./index.js"></script>
 </body>
 </html>
