@@ -2,3 +2,4 @@
 .vscode/
 node_modules/
 /src/config/keys-dev.js
+/src/storage.json

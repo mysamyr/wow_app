@@ -13,8 +13,10 @@
   "scripts": {
     "start": "node index.js",
     "start:dev": "nodemon index.js",
-    "open:win": "start .\\public\\index.html",
-    "open:mac": "open -a ./public/index.html"
+    "prepare": "husky install",
+    "format": "prettier --write ./",
+    "check-quality": "eslint ./",
+    "test": "mocha test/**/*.spec.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -23,7 +25,11 @@
     "mongoose": "^7.4.1"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "eslint": "^8.45.0",
+    "husky": "^8.0.3",
+    "mocha": "^10.2.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
