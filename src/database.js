@@ -1,5 +1,4 @@
 const {Schema, model} = require("mongoose");
-// const {createSearchRegex} = require("./helpers");
 
 const wordSchema = new Schema({
   word: {
@@ -21,14 +20,7 @@ module.exports = {
     });
     await newWord.save();
   },
-  async getAll(letters) {
-    // if (letters?.length) {
-    //   return wordModel.find({
-    //     word: {
-    //       $regex: createSearchRegex(letters)
-    //     }
-    //   });
-    // }
+  async getAll() {
     return wordModel.find();
   },
   async find(word) {
