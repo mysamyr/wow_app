@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -17,13 +18,15 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(cors({origin: "*"}));
 app.use(helmet());
 
 app.use(requestLogger);
 
 app.get("/", (req, res) =>
-  res.sendFile("./public/single-page.html", {root: __dirname}, (error) => {
+  res.sendFile("./public/index.html", {root: __dirname}, (error) => {
     if (error) {
       res.writeHead(500);
       res.end();
@@ -78,18 +81,11 @@ app.delete("/word/:word", validateDeleteWord, async (req, res) => {
   return res.status(204).send();
 });
 
-(async () => {
-  try {
-    mongoose.set('strictQuery', true);
-    await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-    }, (err) => {
-      if (err) console.error("Database error: " + err.message);
-    });
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  } catch (err) {
-    console.error(err.message);
-  }
-})();
+try {
+  mongoose.connect(MONGODB_URI);
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+} catch (err) {
+  console.error(err.message);
+}

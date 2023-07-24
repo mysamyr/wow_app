@@ -1,17 +1,31 @@
 {
+  "name": "wow-words-app",
+  "version": "1.0.0",
+  "description": "Application for game 'Гра в слова Українською' with all words",
+  "main": "index.js",
+  "keywords": [
+    "wow",
+    "wow game",
+    "Гра в слова Українською"
+  ],
+  "author": "Mysamyr",
+  "license": "ISC",
   "scripts": {
     "start": "node index.js",
     "start:dev": "nodemon index.js",
-    "open:win": "start .\\public\\wow.html",
-    "open:mac": "open -a ./public/wow.html"
+    "open:win": "start .\\public\\index.html",
+    "open:mac": "open -a ./public/index.html"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
-    "mongoose": "^6.8.3"
+    "mongoose": "^7.4.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

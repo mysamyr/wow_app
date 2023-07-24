@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+    <title>World of Words</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./script.js"></script>
+</head>
+<body>
+    <h1>Словник для гри WOW</h1>
+    <div class="section">
+        <form id="getWords">
+            <input type="text" id="letters" placeholder="Букви" min="3" required>
+            <button>Шукати</button>
+        </form>
+    </div>
+    <hr>
+    <div class="sections">
+        <div class="section">
+            <form id="addForm">
+                <input type="text" placeholder="Додати нове слово" min="3" required>
+                <button>Додати</button>
+            </form>
+        </div>
+        <div class="section">
+            <form id="deleteWord">
+                <input type="text" placeholder="Видалити слово" required>
+                <button>Видалити</button>
+            </form>
+        </div>
+    </div>
+    <hr>
+    <div class="section result"></div>
+    <h3 class="section count">Кількість: <span>0</span></h3>
+</body>
+</html>
