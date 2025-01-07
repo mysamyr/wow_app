@@ -1,4 +1,5 @@
-.husky/
-node_modules/
-yarn.lock
-**/*.json
+.husky
+assets
+node_modules
+storage.json.json
+package-lock.json

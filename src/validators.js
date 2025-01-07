@@ -1,69 +1,40 @@
-const db = require("./database");
-const { BAD_REQUEST } = require("./constants/status-codes");
 const {
-	ENTER_WORD,
-	MIN_LENGTH,
-	ALREADY_ADDED,
-	MUST_BE_ALPHABET,
-	ENTER_LETTERS,
-} = require("./constants/error-messages");
-const { ALPHABET } = require("./config");
-const { formatWord } = require("./helpers");
+  ENTER_WORD,
+  MIN_LENGTH,
+  MUST_BE_ALPHABET,
+  ENTER_LETTERS,
+} = require('./constants/error-messages');
+const { formatWord } = require('./helpers');
+const { BadRequest } = require('./utils/error');
 
-const isAlphabet = (word) => {
-	const alphabet = new Set(ALPHABET.split(""));
-	for (let char of word) {
-		if (!alphabet.has(char)) return false;
-	}
-	return true;
+const isAlphabet = word => {
+  const alphabet = new Set(process.env.ALPHABET.split(''));
+  for (let char of word) {
+    if (!alphabet.has(char)) return false;
+  }
+  return true;
 };
 
 module.exports.validateAddWord = async (req, res, next) => {
-	const word = formatWord(req.body.word);
-	if (!word)
-		return res.status(BAD_REQUEST).json({
-			message: ENTER_WORD,
-		});
-	if (!isAlphabet(word))
-		return res.status(BAD_REQUEST).json({
-			message: MUST_BE_ALPHABET,
-		});
-	if (word.length < 3)
-		return res.status(BAD_REQUEST).json({
-			message: MIN_LENGTH,
-		});
-	const exist = await db.find(req.body.word);
-	if (exist)
-		return res.status(BAD_REQUEST).json({
-			message: ALREADY_ADDED,
-		});
+  const word = formatWord(req.body.word);
+  if (!word) throw BadRequest(ENTER_WORD);
+  if (!isAlphabet(word)) throw BadRequest(MUST_BE_ALPHABET);
+  if (word.length < 3) throw BadRequest(MIN_LENGTH);
 
-	next();
+  next();
 };
 
 module.exports.validateGetWord = async (req, res, next) => {
-	if (!req.query.u)
-		return res.status(BAD_REQUEST).json({
-			message: ENTER_LETTERS,
-		});
-	if (req.query.u.length < 3)
-		return res.status(BAD_REQUEST).json({
-			message: MIN_LENGTH,
-		});
+  if (!req.query.u) throw BadRequest(ENTER_LETTERS);
+  if (req.query.u.length < 3) throw BadRequest(MIN_LENGTH);
 
-	next();
+  next();
 };
 
 module.exports.validateDeleteWord = async (req, res, next) => {
-	const word = req.params.word;
-	if (!word)
-		return res.status(BAD_REQUEST).json({
-			message: ENTER_WORD,
-		});
-	if (!isAlphabet(word))
-		return res.status(BAD_REQUEST).json({
-			message: MUST_BE_ALPHABET,
-		});
+  const word = req.params.word;
+  if (!word) throw BadRequest(ENTER_WORD);
+  if (!isAlphabet(word)) throw BadRequest(MUST_BE_ALPHABET);
 
-	next();
+  next();
 };

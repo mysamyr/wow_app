@@ -1,5 +1,6 @@
-.idea/
-.vscode/
-node_modules/
-/src/config/keys-dev.js
-/src/storage.json
+.idea
+.vscode
+
+.env
+/node_modules
+storage.json
